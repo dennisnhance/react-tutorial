@@ -6,7 +6,6 @@ export async function getAllUsers() {
     }catch(error) {
         return [];
     }
-    
 }
 
 export async function createUser(data) {

@@ -6,9 +6,9 @@ import {HashRouter as Router, Routes, Route} from 'react-router-dom';
 class App extends Component {
 
     state = {
-        characters: [
-            
-        ],
+        characters: [],
+        successMessage: '',
+        errorMessage: ''
       }
 
     componentDidMount() {
@@ -23,17 +23,16 @@ class App extends Component {
 
     render() {
 
-        const { characters } = this.state
+        const { characters, successMessage } = this.state
         return (
             <div className="container">
+                {successMessage && <p className="vertical-center" style={{color: "green"}}>{successMessage}</p>}
                 <Router>
                     <Routes>
                         <Route exact path='/' element={<Table characterData={characters} removeCharacter={this.removeCharacter}/>}/>
                         <Route path='addNew' element={<Form handleSubmit={this.handleSubmit}/>}/>
                     </Routes>
                 </Router>
-                {/*<Table characterData={characters} removeCharacter={this.removeCharacter}/>
-                <Form handleSubmit={this.handleSubmit}/>*/}
             </div>
         )
     }
@@ -50,8 +49,10 @@ class App extends Component {
 
       handleSubmit = (character) => {
 
-        //this.setState({characters: [...this.state.characters, character]})
-        createUser(character).then(this.populateState());
+        createUser(character).then((dataFromServer) => {
+          this.populateState();
+          this.setState({...this.state, successMessage: "User added successfully"})
+        });
       }
   }
 

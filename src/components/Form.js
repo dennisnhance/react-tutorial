@@ -1,74 +1,39 @@
-import React, {Component} from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-class Form extends Component {
-  
-  initialState = {
-    firstName: '',
-    lastName: '',
-    email: '',
-  }
+import {useForm} from 'react-hook-form'
 
-  state = this.initialState
+const Form = (props) => {
 
-  handleChange = (event) => {
-    const {name, value} = event.target
-  
-    this.setState({
-      [name]: value,
-    })
-  }
-
-  render() {
-
-    //const firstName = this.state.firstName;
-    //const lastName = this.state.lastName;
-    // const email = this.state.email;
-    //const { firstName, lastName, email } = this.state;
-  
-    return (
-      <form>
-        <label htmlFor="name">First Name</label>
-        <input
-          type="text"
-          name="firstName"
-          id="firstName"
-          value={this.state.firstName}
-          onChange={this.handleChange} />
-        <label htmlFor="job">Last Name</label>
-        <input
-          type="text"
-          name="lastName"
-          id="lastName"
-          value={this.state.lastName}
-          onChange={this.handleChange} />
-        <label htmlFor="email">Email</label>
-        <input
-          type="text"
-          name="email"
-          id="email"
-          value={this.state.email}
-          onChange={this.handleChange} />
-        <SubmitButton submitForm={this.submitForm}/>
-      </form>
-    );
-  }
-
-  submitForm = () => {
-    this.props.handleSubmit(this.state)
-    this.setState(this.initialState)
-  }
-}
-
-const SubmitButton = (props) => {
-
+  const {handleSubmit, register, formState: {errors}} = useForm();
   const navigate = useNavigate();
-  const useSubmitForm = () => {
+
+  function submitClicked(data) {
     
-    props.submitForm()
+    props.handleSubmit(data)
     navigate('/')
   }
-  return (<input type="button" value="Submit" onClick={useSubmitForm} />);
+
+  return (
+    <form onSubmit={handleSubmit(submitClicked)}>
+      <label htmlFor="name">First Name</label>
+      <input
+        type="text"
+        {...register("firstName", { required: true, maxLength: 10 })} />
+      {errors.firstName && <p style={{color: "red"}}>Please check the First Name</p>}
+      <label htmlFor="job">Last Name</label>
+      <input
+        type="text"
+        {...register("lastName", { required: true, maxLength: 10 })} />
+      {errors.lastName && <p style={{color: "red"}}>Please check the Last Name</p>}
+      <label htmlFor="email">Email</label>
+      <input
+        type="text"
+        {...register("email", { required: true, pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/  })} />
+      {errors.email && <p style={{color: "red"}}>Please check the Email</p>}
+      <input type="submit" value="Submit"/>
+    </form>
+  );
 }
 
 export default Form;
